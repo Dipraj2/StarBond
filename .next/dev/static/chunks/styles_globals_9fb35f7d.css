@@ -1,0 +1,95 @@
+/* [project]/styles/globals.css [app-client] (css) */
+html, body {
+  color: #333;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  color: #fff;
+  background-color: #333;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  display: flex;
+}
+
+.header a {
+  color: #fff;
+  margin-left: 20px;
+}
+
+.header a:hover {
+  text-decoration: underline;
+}
+
+.button {
+  color: #fff;
+  cursor: pointer;
+  background-color: #0070f3;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  margin: 20px 0;
+  padding: 20px;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.textarea {
+  resize: vertical;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.footer {
+  text-align: center;
+  color: #fff;
+  background-color: #333;
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  bottom: 0;
+}
+
+/*# sourceMappingURL=styles_globals_9fb35f7d.css.map*/

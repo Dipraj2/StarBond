@@ -1,38 +1,23 @@
-import { GetServerSideProps } from 'next';
-import { prisma } from '../../../lib/prisma';
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
-interface PasteProps {
-  content: string;
-  title: string;
-}
-
-const PastePage = ({ content, title }: PasteProps) => {
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
-      <pre className="bg-gray-100 p-4 rounded">{content}</pre>
-    </div>
-  );
+type PageProps = {
+  params: Promise<{ slug: string }>;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.params!;
-  const paste = await prisma.paste.findUnique({
-    where: { slug: String(slug) },
-  });
+export default async function PastePage({ params }: PageProps) {
+  const { slug } = await params;
+  const paste = await prisma.paste.findUnique({ where: { slug } });
 
   if (!paste) {
-    return {
-      notFound: true,
-    };
+    notFound();
   }
 
-  return {
-    props: {
-      content: paste.content,
-      title: paste.title,
-    },
-  };
-};
-
-export default PastePage;
+  return (
+    <div className="container">
+      <h1>{paste.title}</h1>
+      <pre className="card">{paste.content}</pre>
+      <small>{paste.visibility}</small>
+    </div>
+  );
+}

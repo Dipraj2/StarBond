@@ -1,45 +1,35 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { fetchUserUrls } from '../../../lib/api'; // Adjust the import path as necessary
-import UrlCard from '../../../components/url-card'; // Assuming you have a UrlCard component
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-const UrlsPage: React.FC = () => {
-  const [urls, setUrls] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadUrls = async () => {
-      try {
-        const userUrls = await fetchUserUrls();
-        setUrls(userUrls);
-      } catch (error) {
-        console.error('Failed to fetch URLs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUrls();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+export default async function UrlsPage() {
+  const urls = await prisma.url.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
 
   return (
-    <div className="urls-page">
-      <h1>Your Shortened URLs</h1>
+    <div className="container">
+      <h1>Short Links</h1>
       {urls.length === 0 ? (
-        <p>No URLs found. Create a new one!</p>
+        <p>No short links yet.</p>
       ) : (
-        <div className="url-list">
+        <ul>
           {urls.map((url) => (
-            <UrlCard key={url.id} url={url} />
+            <li key={url.id} className="card">
+              <div>
+                <strong>Original:</strong> {url.originalUrl}
+              </div>
+              <div>
+                <strong>Short:</strong>{" "}
+                <Link href={`/s/${url.slug}`}>{`/s/${url.slug}`}</Link>
+              </div>
+              <div>
+                <strong>Clicks:</strong> {url.clicks}
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
-};
-
-export default UrlsPage;
+}

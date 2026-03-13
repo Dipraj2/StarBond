@@ -1,0 +1,18 @@
+{
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/(dashboard)/page": "app/(dashboard)/page.js",
+  "/(dashboard)/pastes/page": "app/(dashboard)/pastes/page.js",
+  "/(dashboard)/urls/page": "app/(dashboard)/urls/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/callback/route": "app/api/auth/callback/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/api/pastes/route": "app/api/pastes/route.js",
+  "/api/urls/[slug]/route": "app/api/urls/[slug]/route.js",
+  "/api/urls/route": "app/api/urls/route.js",
+  "/page": "app/page.js",
+  "/paste/[slug]/page": "app/paste/[slug]/page.js",
+  "/s/[slug]/route": "app/s/[slug]/route.js"
+}

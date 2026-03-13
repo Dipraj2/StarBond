@@ -1,49 +1,22 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-const urlSchema = z.object({
-  originalUrl: z.string().url(),
-  customSlug: z.string().optional(),
-  visibility: z.enum(['public', 'private']).default('public'),
-});
+type RouteContext = {
+  params: Promise<{ slug: string }>;
+};
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const parsedBody = urlSchema.parse(body);
+export async function GET(_request: Request, context: RouteContext) {
+  const { slug } = await context.params;
+  const url = await prisma.url.findUnique({ where: { slug } });
 
-    const { originalUrl, customSlug, visibility } = parsedBody;
-
-    const existingUrl = await prisma.url.findUnique({
-      where: { slug: customSlug },
-    });
-
-    if (customSlug && existingUrl) {
-      return NextResponse.json({ error: 'Slug already in use' }, { status: 400 });
-    }
-
-    const slug = customSlug || generateSlug(originalUrl);
-
-    const newUrl = await prisma.url.create({
-      data: {
-        originalUrl,
-        slug,
-        visibility,
-      },
-    });
-
-    return NextResponse.json(newUrl, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  if (!url) {
+    return NextResponse.json({ error: "Short link not found" }, { status: 404 });
   }
-}
 
-function generateSlug(originalUrl: string) {
-  return originalUrl.split('/').pop()?.split('?')[0] || 'url';
-}
+  await prisma.url.update({
+    where: { id: url.id },
+    data: { clicks: { increment: 1 } },
+  });
 
-export async function GET() {
-  const urls = await prisma.url.findMany();
-  return NextResponse.json(urls);
+  return NextResponse.redirect(url.originalUrl, 302);
 }

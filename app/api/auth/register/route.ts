@@ -1,42 +1,32 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { hashPassword } from "@/lib/auth";
 
-const prisma = new PrismaClient();
+const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
-export default async function register(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+export async function POST(request: Request) {
+  const body = await request.json();
+  const parsed = registerSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
-
+  const existingUser = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   if (existingUser) {
-    return res.status(409).json({ message: 'User already exists' });
+    return NextResponse.json({ error: "User already exists" }, { status: 409 });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
-      username,
-      email,
-      password: hashedPassword,
+      email: parsed.data.email,
+      password: hashPassword(parsed.data.password),
     },
   });
 
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
-
-  res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email } });
+  return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
 }

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+"use client";
+
+import React, { ReactNode, createContext, useContext, useState } from "react";
 
 interface ThemeContextType {
   isDarkMode: boolean;
@@ -16,9 +18,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <div className={isDarkMode ? 'dark' : 'light'}>
-        {children}
-      </div>
+      <div className={isDarkMode ? "dark" : "light"}>{children}</div>
     </ThemeContext.Provider>
   );
 };
@@ -26,7 +26,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };

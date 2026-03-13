@@ -1,0 +1,18 @@
+{
+  "/(auth)/login/page": "/login",
+  "/(auth)/register/page": "/register",
+  "/(dashboard)/page": "/",
+  "/(dashboard)/pastes/page": "/pastes",
+  "/(dashboard)/urls/page": "/urls",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/callback/route": "/api/auth/callback",
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/register/route": "/api/auth/register",
+  "/api/pastes/route": "/api/pastes",
+  "/api/urls/[slug]/route": "/api/urls/[slug]",
+  "/api/urls/route": "/api/urls",
+  "/page": "/",
+  "/paste/[slug]/page": "/paste/[slug]",
+  "/s/[slug]/route": "/s/[slug]"
+}

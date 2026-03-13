@@ -1,70 +1,55 @@
-import React, { useState } from 'react';
+"use client";
 
-const UrlShortenerForm: React.FC = () => {
-    const [url, setUrl] = useState('');
-    const [visibility, setVisibility] = useState('public');
-    const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
+import { FormEvent, useState } from "react";
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
+export default function UrlShortenerForm() {
+  const [url, setUrl] = useState("");
+  const [visibility, setVisibility] = useState("public");
+  const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-        try {
-            const response = await fetch('/api/urls', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url, visibility }),
-            });
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
 
-            if (!response.ok) {
-                throw new Error('Failed to shorten URL');
-            }
+    const response = await fetch("/api/urls", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ originalUrl: url, visibility }),
+    });
 
-            const data = await response.json();
-            setShortenedUrl(data.shortenedUrl);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
+    if (!response.ok) {
+      const data: { error?: string } = await response.json();
+      setError(data.error ?? "Failed to shorten URL");
+      return;
+    }
 
-    return (
-        <div className="url-shortener-form">
-            <h2>Shorten Your URL</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="url">URL:</label>
-                    <input
-                        type="url"
-                        id="url"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="visibility">Visibility:</label>
-                    <select
-                        id="visibility"
-                        value={visibility}
-                        onChange={(e) => setVisibility(e.target.value)}
-                    >
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                    </select>
-                </div>
-                <button type="submit">Shorten</button>
-            </form>
-            {error && <p className="error">{error}</p>}
-            {shortenedUrl && (
-                <p>
-                    Shortened URL: <a href={shortenedUrl}>{shortenedUrl}</a>
-                </p>
-            )}
-        </div>
-    );
-};
+    const data: { shortenedUrl: string } = await response.json();
+    setShortenedUrl(data.shortenedUrl);
+  };
 
-export default UrlShortenerForm;
+  return (
+    <div className="url-shortener-form">
+      <h2>Shorten URL</h2>
+      <form onSubmit={handleSubmit}>
+        <input className="input" type="url" id="url" value={url} onChange={(e) => setUrl(e.target.value)} required />
+        <select className="input" id="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+        <button className="button" type="submit">
+          Shorten
+        </button>
+      </form>
+      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+      {shortenedUrl ? (
+        <p>
+          Shortened URL:{" "}
+          <a href={shortenedUrl} target="_blank" rel="noreferrer">
+            {shortenedUrl}
+          </a>
+        </p>
+      ) : null}
+    </div>
+  );
+}

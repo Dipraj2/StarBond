@@ -1,28 +1,23 @@
-import React from 'react';
-import { useSession } from 'next-auth/react';
-import Header from '../../components/header';
-import PasteList from '../../components/paste-list';
-import UrlList from '../../components/url-shortener-form';
+import Link from "next/link";
+import PasteEditor from "@/components/paste-editor";
+import UrlShortenerForm from "@/components/url-shortener-form";
 
-const DashboardPage: React.FC = () => {
-    const { data: session } = useSession();
+export default function DashboardPage() {
+  return (
+    <div className="container">
+      <h1>Dashboard</h1>
+      <p style={{ marginBottom: "1rem" }}>
+        <Link href="/dashboard/pastes">View Pastes</Link> |{" "}
+        <Link href="/dashboard/urls">View Links</Link>
+      </p>
 
-    return (
-        <div className="dashboard-container">
-            <Header />
-            <h1>Welcome, {session?.user?.name || 'User'}!</h1>
-            <div className="dashboard-content">
-                <section className="pastes-section">
-                    <h2>Your Pastes</h2>
-                    <PasteList />
-                </section>
-                <section className="urls-section">
-                    <h2>Your Shortened URLs</h2>
-                    <UrlList />
-                </section>
-            </div>
-        </div>
-    );
-};
+      <div className="card">
+        <PasteEditor />
+      </div>
 
-export default DashboardPage;
+      <div className="card">
+        <UrlShortenerForm />
+      </div>
+    </div>
+  );
+}

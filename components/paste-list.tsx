@@ -1,10 +1,10 @@
-import React from 'react';
-import { Paste } from '../lib/types'; // Assuming you have a types file for your Paste type
+import React from "react";
+import { Paste } from "../lib/types";
 
 interface PasteListProps {
   pastes: Paste[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 const PasteList: React.FC<PasteListProps> = ({ pastes, onEdit, onDelete }) => {
@@ -19,8 +19,8 @@ const PasteList: React.FC<PasteListProps> = ({ pastes, onEdit, onDelete }) => {
               <h3>{paste.title}</h3>
               <p>{paste.content}</p>
               <div className="paste-actions">
-                <button onClick={() => onEdit(paste.id)}>Edit</button>
-                <button onClick={() => onDelete(paste.id)}>Delete</button>
+                {onEdit ? <button onClick={() => onEdit(paste.id)}>Edit</button> : null}
+                {onDelete ? <button onClick={() => onDelete(paste.id)}>Delete</button> : null}
               </div>
             </li>
           ))}

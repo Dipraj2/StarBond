@@ -1,39 +1,49 @@
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  pastes    Paste[]
-  urls      Url[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+generator client {
+  provider = "prisma-client-js"
 }
 
-model Paste {
-  id          Int      @id @default(autoincrement())
-  title       String
-  content     String
-  visibility  Visibility
-  userId      Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User     @relation(fields: [userId], references: [id])
-}
-
-model Url {
-  id          Int      @id @default(autoincrement())
-  originalUrl String
-  shortUrl    String   @unique
-  userId      Int
-  clicks      Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User     @relation(fields: [userId], references: [id])
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Visibility {
   PUBLIC
   UNLISTED
   PRIVATE
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pastes    Paste[]
+  urls      Url[]
+}
+
+model Paste {
+  id         Int        @id @default(autoincrement())
+  title      String
+  content    String
+  slug       String     @unique
+  visibility Visibility @default(PUBLIC)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  userId     Int?
+  user       User?      @relation(fields: [userId], references: [id])
+}
+
+model Url {
+  id          Int      @id @default(autoincrement())
+  originalUrl String
+  slug        String   @unique
+  shortUrl    String?  @unique
+  visibility  String   @default("public")
+  clicks      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
 }

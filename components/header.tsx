@@ -1,29 +1,20 @@
-import React from 'react';
-import Link from 'next/link';
+import Link from "next/link";
 
-const Header: React.FC = () => {
-    return (
-        <header className="bg-gray-800 text-white p-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <h1 className="text-xl font-bold">
-                    <Link href="/">StarBond</Link>
-                </h1>
-                <nav>
-                    <ul className="flex space-x-4">
-                        <li>
-                            <Link href="/(auth)/login">Login</Link>
-                        </li>
-                        <li>
-                            <Link href="/(auth)/register">Register</Link>
-                        </li>
-                        <li>
-                            <Link href="/(dashboard)">Dashboard</Link>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
-    );
-};
-
-export default Header;
+export default function Header() {
+  return (
+    <header className="header">
+      <div className="container" style={{ display: "flex", justifyContent: "space-between" }}>
+        <strong>
+          <Link href="/">StarBond</Link>
+        </strong>
+        <nav style={{ display: "flex", gap: "1rem" }}>
+          <Link href="/login">Login</Link>
+          <Link href="/register">Register</Link>
+          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/dashboard/pastes">Pastes</Link>
+          <Link href="/dashboard/urls">Links</Link>
+        </nav>
+      </div>
+    </header>
+  );
+}

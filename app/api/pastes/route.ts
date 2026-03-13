@@ -1,52 +1,42 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '../../../lib/prisma';
-import { getSession } from '../../../lib/auth';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession(req);
-    
-    if (!session) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+const pasteSchema = z.object({
+  title: z.string().min(1).max(120),
+  content: z.string().min(1),
+  visibility: z.enum(["PUBLIC", "UNLISTED", "PRIVATE"]).default("PUBLIC"),
+});
 
-    switch (req.method) {
-        case 'POST':
-            const { title, content, visibility } = req.body;
-            const newPaste = await prisma.paste.create({
-                data: {
-                    title,
-                    content,
-                    visibility,
-                    userId: session.userId,
-                },
-            });
-            return res.status(201).json(newPaste);
+function generateSlug(): string {
+  return Math.random().toString(36).slice(2, 10);
+}
 
-        case 'GET':
-            const pastes = await prisma.paste.findMany({
-                where: {
-                    userId: session.userId,
-                },
-            });
-            return res.status(200).json(pastes);
+export async function GET() {
+  const pastes = await prisma.paste.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+  return NextResponse.json(pastes);
+}
 
-        case 'PUT':
-            const { id, updatedContent } = req.body;
-            const updatedPaste = await prisma.paste.update({
-                where: { id },
-                data: { content: updatedContent },
-            });
-            return res.status(200).json(updatedPaste);
+export async function POST(request: Request) {
+  const body = await request.json();
+  const parsed = pasteSchema.safeParse(body);
 
-        case 'DELETE':
-            const { pasteId } = req.body;
-            await prisma.paste.delete({
-                where: { id: pasteId },
-            });
-            return res.status(204).end();
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid paste payload" }, { status: 400 });
+  }
 
-        default:
-            res.setHeader('Allow', ['POST', 'GET', 'PUT', 'DELETE']);
-            return res.status(405).end(`Method ${req.method} Not Allowed`);
-    }
+  const slug = generateSlug();
+  const paste = await prisma.paste.create({
+    data: {
+      title: parsed.data.title,
+      content: parsed.data.content,
+      visibility: parsed.data.visibility,
+      slug,
+    },
+  });
+
+  return NextResponse.json(paste, { status: 201 });
 }

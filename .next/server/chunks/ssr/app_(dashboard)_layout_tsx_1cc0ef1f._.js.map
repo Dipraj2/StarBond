@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../app/%28dashboard%29/layout.tsx"],"sourcesContent":["export default function DashboardLayout({ children }: { children: React.ReactNode }) {\n  return <main>{children}</main>;\n}\n"],"names":[],"mappings":"sDAAe,SAAS,EAAgB,UAAE,CAAQ,CAAiC,EACjF,MAAO,CAAA,EAAA,EAAA,GAAA,EAAC,OAAA,UAAM,GAChB"}
