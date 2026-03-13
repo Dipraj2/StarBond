@@ -87,6 +87,16 @@ StarBond is a web application that combines a Pastebin and URL Shortener, built 
 
 For detailed deployment instructions, refer to the [DEPLOYMENT.md](docs/DEPLOYMENT.md) file.
 
+### Vercel + Prisma note
+
+Vercel caches dependencies, so Prisma Client can become stale unless it is generated during install/build.
+This project includes:
+
+- `postinstall`: `prisma generate`
+- `build`: `prisma generate && next build`
+
+This ensures deployments have a fresh Prisma Client.
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
