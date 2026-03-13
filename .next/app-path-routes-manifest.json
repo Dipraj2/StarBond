@@ -12,6 +12,9 @@
   "/api/pastes/route": "/api/pastes",
   "/api/urls/[slug]/route": "/api/urls/[slug]",
   "/api/urls/route": "/api/urls",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/pastes/page": "/dashboard/pastes",
+  "/dashboard/urls/page": "/dashboard/urls",
   "/page": "/",
   "/paste/[slug]/page": "/paste/[slug]",
   "/s/[slug]/route": "/s/[slug]"

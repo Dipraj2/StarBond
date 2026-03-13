@@ -12,6 +12,9 @@
   "/api/pastes/route": "app/api/pastes/route.js",
   "/api/urls/[slug]/route": "app/api/urls/[slug]/route.js",
   "/api/urls/route": "app/api/urls/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/pastes/page": "app/dashboard/pastes/page.js",
+  "/dashboard/urls/page": "app/dashboard/urls/page.js",
   "/page": "app/page.js",
   "/paste/[slug]/page": "app/paste/[slug]/page.js",
   "/s/[slug]/route": "app/s/[slug]/route.js"

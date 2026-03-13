@@ -96,6 +96,24 @@
       "namedRegex": "^/api/urls(?:/)?$"
     },
     {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/pastes",
+      "regex": "^/dashboard/pastes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/pastes(?:/)?$"
+    },
+    {
+      "page": "/dashboard/urls",
+      "regex": "^/dashboard/urls(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/urls(?:/)?$"
+    },
+    {
       "page": "/login",
       "regex": "^/login(?:/)?$",
       "routeKeys": {},
