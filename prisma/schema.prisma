@@ -13,37 +13,84 @@ enum Visibility {
   PRIVATE
 }
 
+enum RedirectType {
+  TEMPORARY
+  PERMANENT
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
+  name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   pastes    Paste[]
   urls      Url[]
+  sessions  Session[]
 }
 
 model Paste {
-  id         Int        @id @default(autoincrement())
-  title      String
-  content    String
-  slug       String     @unique
-  visibility Visibility @default(PUBLIC)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  userId     Int?
-  user       User?      @relation(fields: [userId], references: [id])
+  id             Int        @id @default(autoincrement())
+  title          String
+  content        String
+  language       String     @default("text")
+  slug           String     @unique
+  visibility     Visibility @default(PUBLIC)
+  expiresAt      DateTime?
+  passwordHash   String?
+  burnAfterRead  Boolean    @default(false)
+  views          Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  userId         Int
+  user           User       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([visibility, createdAt])
+  @@index([expiresAt])
 }
 
 model Url {
-  id          Int      @id @default(autoincrement())
-  originalUrl String
-  slug        String   @unique
-  shortUrl    String?  @unique
-  visibility  String   @default("public")
-  clicks      Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      Int?
-  user        User?    @relation(fields: [userId], references: [id])
+  id           Int          @id @default(autoincrement())
+  originalUrl  String
+  slug         String       @unique
+  visibility   Visibility   @default(PUBLIC)
+  redirectType RedirectType @default(TEMPORARY)
+  expiresAt    DateTime?
+  clickLimit   Int?
+  clicks       Int          @default(0)
+  lastClickedAt DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userId       Int
+  user         User         @relation(fields: [userId], references: [id])
+  analytics    UrlClick[]
+
+  @@index([userId])
+  @@index([visibility, createdAt])
+  @@index([expiresAt])
+}
+
+model UrlClick {
+  id         Int      @id @default(autoincrement())
+  urlId      Int
+  referrer   String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  url        Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
+
+  @@index([urlId, createdAt])
+}
+
+model Session {
+  id         Int      @id @default(autoincrement())
+  tokenHash  String   @unique
+  userId     Int
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }

@@ -1,106 +1,96 @@
 # StarBond
 
-StarBond is a web application that combines a Pastebin and URL Shortener, built with Next.js and TypeScript. It allows users to create and share text pastes with various visibility options and to shorten URLs with analytics features. This README provides an overview of the project, setup instructions, API routes, and deployment guidelines.
+StarBond is a Next.js + TypeScript web app that combines:
 
-## Features
+- Pastebin (with visibility, expiry, password lock, burn-after-read, raw view)
+- URL shortener (with custom alias, 301/302 redirect, expiry, click limit, analytics)
 
-- **Paste Creation**: Users can create pastes with options for public, unlisted, or private visibility.
-- **URL Shortening**: Users can shorten URLs and track analytics such as click counts.
-- **User Authentication**: Secure user registration and login with JWT or session tokens.
-- **Responsive Design**: A modern gray theme for a professional user experience.
-- **Analytics Dashboard**: Users can view statistics for their pastes and shortened URLs.
+## Stack
 
-## Tech Stack
+- Next.js (App Router) + TypeScript
+- Prisma ORM + PostgreSQL (Neon/Supabase)
+- Zod validation
+- Cookie-based sessions
 
-- **Frontend**: Next.js with TypeScript
-- **Backend**: Next.js API routes
-- **Database**: PostgreSQL with Prisma ORM
-- **Styling**: CSS with a modern gray theme
+## Quick start
 
-## Getting Started
+```bash
+npm install
+cp .env.example .env
+npx prisma generate
+npx prisma db push
+npm run dev
+```
 
-### Prerequisites
+Open `http://localhost:3000`.
 
-- Node.js (version 14 or higher)
-- PostgreSQL (version 12 or higher)
-- A code editor (e.g., VS Code)
+## Environment variables
 
-### Installation
+See `.env.example`.
 
-1. Clone the repository:
+Required:
 
-   ```
-   git clone https://github.com/yourusername/StarBond.git
-   cd StarBond
-   ```
+- `DATABASE_URL`
+- `BASE_URL`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `JWT_SECRET`
+- `SESSION_SECRET`
 
-2. Install dependencies:
+## Scripts
 
-   ```
-   npm install
-   ```
+```bash
+npm run dev
+npm run build
+npm run start
+npm run test
+```
 
-3. Set up the database:
+## API routes
 
-   - Create a PostgreSQL database.
-   - Copy `.env.example` to `.env` and update the database connection string.
+### Auth
 
-4. Run Prisma migrations:
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
 
-   ```
-   npx prisma migrate dev --name init
-   ```
+### Pastes
 
-5. Seed the database (optional):
+- `GET /api/pastes?mine=1&q=search`
+- `POST /api/pastes`
+- `PATCH /api/pastes`
+- `DELETE /api/pastes?id=:id`
+- `GET /api/pastes/slug/:slug?password=...`
+- `GET /api/pastes/raw/:slug?password=...`
 
-   ```
-   npx ts-node prisma.seed.ts
-   ```
+### URLs
 
-6. Start the development server:
+- `GET /api/urls?mine=1`
+- `POST /api/urls`
+- `PATCH /api/urls`
+- `DELETE /api/urls?id=:id`
+- `GET /s/:slug` (redirect endpoint)
 
-   ```
-   npm run dev
-   ```
+## Seed data
 
-   The application will be available at `http://localhost:3000`.
+```bash
+npx ts-node prisma.seed.ts
+```
 
-## API Routes
+## Free deployment (Vercel + Neon)
 
-- **Authentication**
-  - `POST /api/auth/register`: Register a new user.
-  - `POST /api/auth/login`: Log in an existing user.
-  - `GET /api/auth/callback`: Handle authentication callback.
+1. Push repo to GitHub.
+2. Import repo in Vercel.
+3. Add env vars in Vercel project settings.
+4. Deploy.
 
-- **Pastes**
-  - `POST /api/pastes`: Create a new paste.
-  - `GET /api/pastes`: Retrieve all pastes for the authenticated user.
-  - `PUT /api/pastes/:id`: Update a specific paste.
-  - `DELETE /api/pastes/:id`: Delete a specific paste.
+This project runs `prisma generate` in both `postinstall` and `build` to avoid stale Prisma Client on Vercel cache.
 
-- **URLs**
-  - `POST /api/urls`: Create a new shortened URL.
-  - `GET /api/urls`: Retrieve all shortened URLs for the authenticated user.
-  - `GET /api/urls/:slug`: Redirect to the original URL based on the slug.
+## Production checklist
 
-## Deployment
-
-For detailed deployment instructions, refer to the [DEPLOYMENT.md](docs/DEPLOYMENT.md) file.
-
-### Vercel + Prisma note
-
-Vercel caches dependencies, so Prisma Client can become stale unless it is generated during install/build.
-This project includes:
-
-- `postinstall`: `prisma generate`
-- `build`: `prisma generate && next build`
-
-This ensures deployments have a fresh Prisma Client.
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.# StarBond
+- Set strong secrets in env vars.
+- Use production `BASE_URL` and `NEXTAUTH_URL`.
+- Confirm redirect route `/s/:slug` works.
+- Confirm paste protection (private/password/burn-after-read).
+- Monitor Neon limits and Vercel logs.

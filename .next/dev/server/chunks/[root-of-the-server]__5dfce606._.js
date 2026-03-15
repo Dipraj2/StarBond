@@ -71,7 +71,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$serv
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/prisma.ts [app-route] (ecmascript)");
 ;
 ;
-async function GET(_request, context) {
+async function GET(request, context) {
     const { slug } = await context.params;
     const url = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].url.findUnique({
         where: {
@@ -81,6 +81,20 @@ async function GET(_request, context) {
     if (!url) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL("/", process.env.BASE_URL ?? "http://localhost:3000"));
     }
+    if (url.expiresAt && url.expiresAt.getTime() <= Date.now()) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Short link expired"
+        }, {
+            status: 410
+        });
+    }
+    if (url.clickLimit !== null && url.clicks >= (url.clickLimit ?? 0)) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Click limit reached"
+        }, {
+            status: 410
+        });
+    }
     await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].url.update({
         where: {
             id: url.id
@@ -88,10 +102,18 @@ async function GET(_request, context) {
         data: {
             clicks: {
                 increment: 1
-            }
+            },
+            lastClickedAt: new Date()
         }
     });
-    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url.originalUrl, 302);
+    await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].urlClick.create({
+        data: {
+            urlId: url.id,
+            referrer: request.headers.get("referer"),
+            userAgent: request.headers.get("user-agent")
+        }
+    });
+    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url.originalUrl, url.redirectType === "PERMANENT" ? 301 : 302);
 }
 }),
 ];

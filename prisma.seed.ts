@@ -18,6 +18,7 @@ async function main() {
       {
         title: "First Paste",
         content: "This is the content of the first paste.",
+        language: "text",
         slug: "first-paste",
         visibility: "PUBLIC",
         userId: user.id,
@@ -25,6 +26,7 @@ async function main() {
       {
         title: "Second Paste",
         content: "This is the content of the second paste.",
+        language: "text",
         slug: "second-paste",
         visibility: "PRIVATE",
         userId: user.id,
@@ -38,13 +40,13 @@ async function main() {
       {
         originalUrl: "https://example.com",
         slug: "exmpl1",
-        shortUrl: "http://localhost:3000/s/exmpl1",
+        visibility: "PUBLIC",
         userId: user.id,
       },
       {
         originalUrl: "https://anotherexample.com",
         slug: "anex22",
-        shortUrl: "http://localhost:3000/s/anex22",
+        visibility: "UNLISTED",
         userId: user.id,
       },
     ],

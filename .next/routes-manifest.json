@@ -22,12 +22,20 @@
   },
   "dynamicRoutes": [
     {
-      "page": "/api/urls/[slug]",
-      "regex": "^/api/urls/([^/]+?)(?:/)?$",
+      "page": "/api/pastes/raw/[slug]",
+      "regex": "^/api/pastes/raw/([^/]+?)(?:/)?$",
       "routeKeys": {
         "nxtPslug": "nxtPslug"
       },
-      "namedRegex": "^/api/urls/(?<nxtPslug>[^/]+?)(?:/)?$"
+      "namedRegex": "^/api/pastes/raw/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/pastes/slug/[slug]",
+      "regex": "^/api/pastes/slug/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/pastes/slug/(?<nxtPslug>[^/]+?)(?:/)?$"
     },
     {
       "page": "/paste/[slug]",
@@ -66,16 +74,22 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
-      "page": "/api/auth/callback",
-      "regex": "^/api/auth/callback(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/callback(?:/)?$"
-    },
-    {
       "page": "/api/auth/login",
       "regex": "^/api/auth/login(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/auth/logout",
+      "regex": "^/api/auth/logout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/logout(?:/)?$"
+    },
+    {
+      "page": "/api/auth/me",
+      "regex": "^/api/auth/me(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/me(?:/)?$"
     },
     {
       "page": "/api/auth/register",

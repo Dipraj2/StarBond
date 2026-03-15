@@ -8,7 +8,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "node --test tests/basic/routes.test.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "typescript": "^4.5.4",
+    "ts-node": "^10.9.2",
     "eslint": "^7.32.0",
     "jest": "^27.4.5",
     "@types/jest": "^27.0.2",
